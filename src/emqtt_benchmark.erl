@@ -93,11 +93,12 @@ run(Parent, N, PubSub, Opts) ->
 connect(Parent, N, PubSub, Opts) ->
     process_flag(trap_exit, true),
     random:seed(os:timestamp()),
+    Foo = io_lib:format("loadtestdevice~15..0B", [N]),
     ClientId = client_id(PubSub, N, Opts),
     MqttOpts = [{client_id, ClientId} | mqtt_opts(Opts)],
     TcpOpts  = tcp_opts(Opts),
-    AllOpts  = [{seq, N}, {client_id, ClientId} | Opts],
-	case emqttc:start_link(MqttOpts, TcpOpts) of
+    AllOpts  = [{seq, Foo}, {client_id, ClientId} | Opts],
+  case emqttc:start_link(MqttOpts, TcpOpts) of
     {ok, Client} ->
         Parent ! {connected, N, Client},
         case PubSub of
